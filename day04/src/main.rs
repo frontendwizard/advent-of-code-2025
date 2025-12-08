@@ -160,6 +160,28 @@ fn parse_input(input: &str) -> Vec<Vec<char>> {
     input.lines().map(|line| line.chars().collect()).collect()
 }
 
+fn recursivelly_find_and_remove_rolls(initial_state: &str, total: i32) -> (String, i32) {
+    let (new_state, count) = find_accessible_rolls_thread_per_row(&initial_state);
+    let next_state_input = new_state.replace('x', ".");
+
+    if count == 0 {
+        (new_state, total)
+    } else {
+        recursivelly_find_and_remove_rolls(&next_state_input, total + count)
+    }
+}
+
+fn recursivelly_find_and_remove_rolls_serial(initial_state: &str, total: i32) -> (String, i32) {
+    let (new_state, count) = find_accessible_rolls(&initial_state);
+    let next_state_input = new_state.replace('x', ".");
+
+    if count == 0 {
+        (new_state, total)
+    } else {
+        recursivelly_find_and_remove_rolls(&next_state_input, total + count)
+    }
+}
+
 fn main() {
     let input = file_input_to_string();
     let start = Instant::now();
@@ -170,18 +192,34 @@ fn main() {
         start.elapsed()
     );
 
-    let start = Instant::now();
-    let (_, x_count) = find_accessible_rolls_thread_per_cell(&input);
-    println!(
-        "Number of accessible rolls (thread per cell): {} in {:?}",
-        x_count,
-        start.elapsed()
-    );
+    // let start = Instant::now();
+    // let (_, x_count) = find_accessible_rolls_thread_per_cell(&input);
+    // println!(
+    //     "Number of accessible rolls (thread per cell): {} in {:?}",
+    //     x_count,
+    //     start.elapsed()
+    // );
 
     let start = Instant::now();
     let (_, x_count) = find_accessible_rolls_thread_per_row(&input);
     println!(
         "Number of accessible rolls (thread per row): {} in {:?}",
+        x_count,
+        start.elapsed()
+    );
+
+    let start = Instant::now();
+    let (_, x_count) = recursivelly_find_and_remove_rolls(&input, 0);
+    println!(
+        "Number of accessible rolls (recursive thread per row): {} in {:?}",
+        x_count,
+        start.elapsed()
+    );
+
+    let start = Instant::now();
+    let (_, x_count) = recursivelly_find_and_remove_rolls_serial(&input, 0);
+    println!(
+        "Number of accessible rolls (recursive serial): {} in {:?}",
         x_count,
         start.elapsed()
     );
@@ -216,5 +254,35 @@ x.@@@.@@@@
 x.x.@@@.x.",
         );
         assert_eq!(find_accessible_rolls(&input), (output, 13 as i32));
+    }
+
+    #[test]
+    fn it_works_recursively() {
+        let input = "..@@.@@@@.
+@@@.@.@.@@
+@@@@@.@.@@
+@.@@@@..@.
+@@.@@@@.@@
+.@@@@@@@.@
+.@.@.@.@@@
+@.@@@.@@@@
+.@@@@@@@@.
+@.@.@@@.@.";
+        let output = String::from(
+            "..........
+..........
+..........
+....@@....
+...@@@@...
+...@@@@@..
+...@.@.@@.
+...@@.@@@.
+...@@@@@..
+....@@@...",
+        );
+        assert_eq!(
+            recursivelly_find_and_remove_rolls(input, 0),
+            (output, 43 as i32)
+        );
     }
 }

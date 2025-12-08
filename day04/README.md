@@ -46,6 +46,37 @@ Consider your complete diagram of the paper roll locations. **How many rolls of 
 
 ---
 
+## Part Two
+
+Now, the Elves just need help accessing as much of the paper as they can.
+
+Once a roll of paper can be accessed by a forklift, it can be removed. Once a roll of paper is removed, the forklifts might be able to access more rolls of paper, which they might also be able to remove. **How many total rolls of paper could the Elves remove if they keep repeating this process?**
+
+Starting with the same example as above, here is one way you could remove as many rolls of paper as possible:
+
+```
+Initial state:          Remove 13:              Remove 12:
+..@@.@@@@.              ..xx.xx@x.              .......x..
+@@@.@.@.@@              x@@.@.@.@@              .@@.x.x.@x
+@@@@@.@.@@              @@@@@.x.@@              x@@@@...@@
+@.@@@@..@.              @.@@@@..@.              x.@@@@..x.
+@@.@@@@.@@              x@.@@@@.@x              .@.@@@@.x.
+.@@@@@@@.@              .@@@@@@@.@              .x@@@@@@.x
+.@.@.@.@@@              .@.@.@.@@@              .x.@.@.@@@
+@.@@@.@@@@              x.@@@.@@@@              ..@@@.@@@@
+.@@@@@@@@.              .@@@@@@@@.              .x@@@@@@@.
+@.@.@@@.@.              x.x.@@@.x.              ....@@@...
+```
+
+The process continues until no more rolls are accessible:
+- Remove 7, then 5, then 2, then 1, then 1, then 1, then 1...
+
+In this example, a total of **43** rolls of paper can be removed.
+
+Start with your original diagram. **How many rolls of paper in total can be removed by the Elves and their forklifts?**
+
+---
+
 ## Learnings: Parallelism Granularity
 
 We implemented three approaches and benchmarked them:
